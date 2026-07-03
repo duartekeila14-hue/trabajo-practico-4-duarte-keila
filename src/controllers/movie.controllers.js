@@ -1,11 +1,34 @@
 import { Movie } from "../models/movie.model.js"
 
 export const createMovie = async (req,res) => {
-    
+    // title: string obligatorio
+    // genre: string obligatorio
+    // duration: integer (minutos) obligatorio
+    // year: integer (4 dígitos, mayor o igual a 1888 y menor o igual al año actual) obligatorio
+    // synopsis: string opcional
+    try{
+        const { title, genre, duration, year, synopsis } = req.body
+        if (!title || !genre || !duration || !year) {
+            return res.status(400).json({message: "Faltan campos obligatorios"})
+        }
+        if (year < 1888 || year > new Date().getFullYear()){
+            return res.status(400).json({message: "El año debe ser mayor o igual a 1888 y menor o igual al año actual."})
+        }
+
+        const newMovie = await Movie.create({ title, genre, duration, year, synopsis})
+        return res.status(201).json({message: "Película creada correctamente.", movie: newMovie})
+    } catch (error) {
+        return res.status(500).json({message: "Error interno del servidor."}) 
+    }
 }
 
 export const getMovies = async (req,res) => {
-
+    try{
+        const allMovies = await Movie.findAll()
+        return res.status(200).json({message: "Películas obtenidas: ", movies: allMovies})
+    }catch (error) {
+        return res.status(500).json({message: "Error interno del servidor.", error: error.message})
+    }
 }
 
 export const getMovieById = async (req,res) => {

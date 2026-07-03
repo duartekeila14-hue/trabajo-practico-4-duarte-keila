@@ -23,6 +23,7 @@ export const Movie = sequelize.define("Movies", {
     },
     year: {
         type: DataTypes.INTEGER,
+        length:4,
         allowNull: false,
     },
     synopsis: {
