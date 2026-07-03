@@ -25,6 +25,9 @@ export const createMovie = async (req,res) => {
 export const getMovies = async (req,res) => {
     try{
         const allMovies = await Movie.findAll()
+        if (allMovies.length === 0){
+            return res.status(404).json({message: "No se encontraron películas. Agrega una para poder ver la lista."})
+        }
         return res.status(200).json({message: "Películas obtenidas: ", movies: allMovies})
     }catch (error) {
         return res.status(500).json({message: "Error interno del servidor.", error: error.message})
@@ -32,7 +35,16 @@ export const getMovies = async (req,res) => {
 }
 
 export const getMovieById = async (req,res) => {
-
+    try{
+        const { id } = req.params
+        const findMovie = await Movie.findByPk(id)
+        if (!findMovie) {
+            return res.status(404).json({message: "Película no encontrada."})
+        }
+        return res.status(200).json({message: "Película encontrada: ", movie: findMovie })
+    } catch(error){
+        return res.status(500).json({message: "Error interno del servidor.", error: error.message})
+    }
 }
 
 export const updateMovie = async (req,res) => {
